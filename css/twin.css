@@ -394,3 +394,19 @@ body.trayon .toast{bottom:100px}
 .sh:has(.notes.vis) .lede{opacity:1;transform:none}
 .lede a{white-space:nowrap;font-weight:700}
 @media (max-width:700px){.lede{font-size:13px}}
+
+/* loading screen */
+#boot{display:none;position:fixed;inset:0;z-index:400;background:var(--paper);cursor:pointer;transition:opacity .9s var(--ease),transform .9s var(--ease)}
+#boot::before{content:'';position:absolute;inset:0;background-image:radial-gradient(var(--dot) 1.2px,transparent 1.3px);background-size:32px 32px}
+#boot canvas{position:absolute;inset:0;width:100%;height:100%}
+#boot .bbar{position:absolute;left:50%;bottom:9vh;width:min(320px,60vw);height:2px;transform:translateX(-50%);background:var(--line);border-radius:2px;overflow:hidden}
+#boot .bbar i{display:block;height:100%;background:linear-gradient(90deg,var(--mint),var(--g));transform:scaleX(0);transform-origin:left;will-change:transform}
+#boot .bskip{position:absolute;right:22px;bottom:20px;font:600 11.5px J;color:var(--fa)}
+#boot.out{opacity:0;transform:scale(1.03);pointer-events:none}
+html.booting body{overflow:hidden}
+html.booting #boot{display:block}
+html.booting #nav{opacity:0;transform:translateY(-14px)}
+#nav{transition:background .3s,border-color .3s,opacity .8s var(--ease) .25s,transform .8s var(--ease) .25s}
+html.booting .stage,html.booting .hcopy>*{animation-play-state:paused}
+html.booting .tape{opacity:0}
+.tape{transition:opacity .8s var(--ease) .4s}
