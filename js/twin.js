@@ -412,7 +412,7 @@
     try {
       const s = await api('stats'); S.stats = s;
       const items = s.feed.length ? s.feed.map(f => `<span><b class="${f.side === 'buy' ? 'buy' : ''}">${f.side.toUpperCase()}</b> $${esc(f.sym)} · ${(+f.sol).toFixed(3)} SOL · twin #${f.id} ($${esc(f.a)} × $${esc(f.b)}) · ${ago(f.at)}</span>`) : [`<span><b>${s.live}</b> twins live</span>`, `<span><b>${s.trades}</b> trades so far</span>`, `<span>engine passes every few minutes</span>`];
-      const html = items.join(''); $('#tapeIn').innerHTML = html + html; $('#tape').hidden = false;
+      if ($('#tapeIn')) { const html = items.join(''); $('#tapeIn').innerHTML = html + html; $('#tape').hidden = false; }
       $('#pipeAscii').textContent = asciiStats(s);
     } catch (e) { }
   }
