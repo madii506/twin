@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TWIN</title>
+<meta name="description" content="bind two coins to one market maker. when one pumps, both pump.">
+<meta name="theme-color" content="#eef9f2">
+<meta property="og:title" content="TWIN">
+<meta property="og:description" content="bind two coins to one market maker. when one pumps, both pump.">
+<meta property="og:image" content="/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="/img/og.png">
+<link rel="icon" href="/img/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/img/apple-touch.png">
+<link rel="preload" href="/fonts/jbm-800.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/css/twin.css">
+</head>
+<body>
+<canvas id="rain" aria-hidden="true"></canvas>
+<div class="progress" id="progress" aria-hidden="true"></div>
+<nav id="nav">
+  <div class="links" id="links">
+    <a href="#lab" data-s="lab">Lab</a><a href="#find" data-s="find">Find</a><a href="#bind" data-s="bind">Bind</a><a href="#twins" data-s="twins">Twins</a><a href="#engine" data-s="engine">Engine</a><a href="#faq" data-s="faq">FAQ</a>
+    <span class="ind" id="ind"></span>
+  </div>
+  <button class="kbd" id="cmdBtn" type="button" title="Command bar (/)">/</button>
+  <button class="wbtn" id="wBtn" type="button"><i></i><span id="wLabel">Connect</span></button>
+</nav>
+
+<main>
+  <section class="hero" id="top">
+    <div class="stage"><canvas id="coins" aria-label="Two ASCII coins spinning together"></canvas></div>
+    <h1 class="sr">TWIN. Bind two coins to one market maker.</h1>
+    <div class="hcopy">
+      <p class="prompt"><span id="typed"></span><i class="caret"></i></p>
+      <form class="pairbar" id="pairBar" autocomplete="off">
+        <label class="slot"><span>A</span><input id="hA" placeholder="coin A contract" spellcheck="false" aria-label="Coin A contract address"></label>
+        <button class="link" type="button" id="hSwap" title="Swap A and B">⇄</button>
+        <label class="slot"><span>B</span><input id="hB" placeholder="coin B contract" spellcheck="false" aria-label="Coin B contract address"></label>
+        <button class="btn pri" type="submit">Sync them</button>
+      </form>
+      <p class="hint">no B? <button type="button" class="ul" data-go="find">find a twin for any coin</button></p>
+    </div>
+    <div class="tape" id="tape" hidden><span class="tl"><i class="dot"></i>ENGINE</span><div class="tw"><div class="tin" id="tapeIn"></div></div></div>
+  </section>
+
+  <section class="sec lab" id="lab">
+    <header class="sh"><h2 class="sr">SYNC LAB</h2><pre class="fig" aria-hidden="true"><i class="s">:&#x27;</i><i class="h">######</i><i class="s">::&#x27;</i><i class="h">##</i><i class="s">:::&#x27;</i><i class="h">##</i><i class="s">:&#x27;</i><i class="h">##</i><i class="s">:::</i> <i class="h">##</i><i class="s">::&#x27;</i><i class="h">######</i><i class="s">:::::&#x27;</i><i class="h">##</i><i class="s">::::::::::&#x27;</i><i class="h">###</i><i class="s">::::&#x27;</i><i class="h">########</i><i class="s">::</i>
+<i class="s">&#x27;</i><i class="h">##</i><i class="s">...</i> <i class="h">##</i><i class="s">:.</i> <i class="h">##</i><i class="s">:&#x27;</i><i class="h">##</i><i class="s">::</i> <i class="h">###</i><i class="s">::</i> <i class="h">##</i><i class="s">:&#x27;</i><i class="h">##</i><i class="s">...</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:::::::::&#x27;</i><i class="h">##</i> <i class="h">##</i><i class="s">:::</i> <i class="h">##</i><i class="s">....</i> <i class="h">##</i><i class="s">:</i>
+ <i class="h">##</i><i class="s">:::..:::.</i> <i class="h">####</i><i class="s">:::</i> <i class="h">####</i><i class="s">:</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">:::..:::::</i> <i class="h">##</i><i class="s">::::::::&#x27;</i><i class="h">##</i><i class="s">:.</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:</i>
+<i class="s">.</i> <i class="h">######</i><i class="s">::::.</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i> <i class="h">##</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">::::::::::</i> <i class="h">##</i><i class="s">:::::::&#x27;</i><i class="h">##</i><i class="s">:::.</i> <i class="h">##</i><i class="s">:</i> <i class="h">########</i><i class="s">::</i>
+<i class="s">:.....</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">.</i> <i class="h">####</i><i class="s">:</i> <i class="h">##</i><i class="s">::::::::::</i> <i class="h">##</i><i class="s">:::::::</i> <i class="h">#########</i><i class="s">:</i> <i class="h">##</i><i class="s">....</i> <i class="h">##</i><i class="s">:</i>
+<i class="s">&#x27;</i><i class="h">##</i><i class="s">:::</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:.</i> <i class="h">###</i><i class="s">:</i> <i class="h">##</i><i class="s">:::</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:::::::</i> <i class="h">##</i><i class="s">....</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:</i>
+<i class="s">.</i> <i class="h">######</i><i class="s">:::::</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">::.</i> <i class="h">##</i><i class="s">:.</i> <i class="h">######</i><i class="s">:::::</i> <i class="h">########</i><i class="s">:</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:</i> <i class="h">########</i><i class="s">::</i>
+<i class="s">:......::::::..:::::..::::..:::......::::::........::..:::::..::........:::</i></pre><ul class="notes"><li>real 5m, 15m or 1h candles from GeckoTerminal for both coins</li><li>both rebased to 100 so you can see who runs ahead</li><li>the gap below is the distance between them; the band is where the maker steps in</li><li>drag the band, move the sliders: the replay reruns the maker on those candles</li></ul></header>
+    <div class="labgrid">
+      <div class="panel chartp">
+        <div class="pbar">
+          <div class="chips" id="labChips"><span class="chip ghost">pick two coins</span></div>
+          <div class="tabs" id="tfTabs"><button type="button" data-tf="5m" class="on">5m</button><button type="button" data-tf="15m">15m</button><button type="button" data-tf="1h">1h</button></div>
+        </div>
+        <div class="charts">
+          <canvas id="cPrice" aria-label="Both coins, rebased to 100"></canvas>
+          <canvas id="cSpread" aria-label="The gap between them, with the band"></canvas>
+          <div class="xh" id="xh" hidden></div>
+          <div class="empty big" id="labEmpty">Paste two contracts above, or try <button type="button" class="ul" id="labDemo">two trending coins</button>.</div>
+        </div>
+        <div class="scrub"><button type="button" class="link" id="play" title="Replay">▶</button><input type="range" id="scrub" min="0" max="1000" value="1000" aria-label="Replay position"><span class="mono" id="scrubT">—</span></div>
+      </div>
+      <aside class="panel side">
+        <div class="gauge"><canvas id="gauge" width="260" height="150" aria-hidden="true"></canvas><div class="gv"><b id="syncPct">—</b><span>sync</span></div></div>
+        <div class="ctl"><label>band <b id="vBand">8%</b></label><input type="range" id="sBand" min="2" max="40" step="1" value="8"></div>
+        <div class="ctl"><label>buy laggard <b id="vBuy">20%</b></label><input type="range" id="sBuy" min="5" max="60" step="1" value="20"></div>
+        <div class="ctl"><label>trim leader <b id="vTrim">35%</b></label><input type="range" id="sTrim" min="0" max="100" step="5" value="35"></div>
+        <div class="ctl"><label>cooldown <b id="vCool">3m</b></label><input type="range" id="sCool" min="1" max="120" step="1" value="3"></div>
+        <div class="replay" id="replayOut"><span class="mono">replay on real candles</span><div class="rr"><b id="rTrades">0</b><span>trades</span></div><div class="rr"><b id="rValue">—</b><span>maker vs cash</span></div><div class="rr"><b id="rHold">—</b><span>50/50 hold</span></div></div>
+        <button class="btn pri wide" type="button" id="labBind" disabled>Bind these two</button>
+      </aside>
+    </div>
+  </section>
+
+  <section class="sec" id="find">
+    <header class="sh"><h2 class="sr">FIND A TWIN</h2><pre class="fig" aria-hidden="true"><i class="s">&#x27;</i><i class="h">########</i><i class="s">:&#x27;</i><i class="h">####</i><i class="s">:&#x27;</i><i class="h">##</i><i class="s">:::</i> <i class="h">##</i><i class="s">:&#x27;</i><i class="h">########</i><i class="s">::::::::&#x27;</i><i class="h">###</i><i class="s">:::::::&#x27;</i><i class="h">########</i><i class="s">:&#x27;</i><i class="h">##</i><i class="s">:::::&#x27;</i><i class="h">##</i><i class="s">:&#x27;</i><i class="h">####</i><i class="s">:&#x27;</i><i class="h">##</i><i class="s">:::</i> <i class="h">##</i><i class="s">:</i>
+ <i class="h">##</i><i class="s">.....::.</i> <i class="h">##</i><i class="s">::</i> <i class="h">###</i><i class="s">::</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">....</i> <i class="h">##</i><i class="s">::::::&#x27;</i><i class="h">##</i> <i class="h">##</i><i class="s">::::::...</i> <i class="h">##</i><i class="s">..::</i> <i class="h">##</i><i class="s">:&#x27;</i><i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">:.</i> <i class="h">##</i><i class="s">::</i> <i class="h">###</i><i class="s">::</i> <i class="h">##</i><i class="s">:</i>
+ <i class="h">##</i><i class="s">::::::::</i> <i class="h">##</i><i class="s">::</i> <i class="h">####</i><i class="s">:</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:::::&#x27;</i><i class="h">##</i><i class="s">:.</i> <i class="h">##</i><i class="s">::::::::</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">::</i> <i class="h">####</i><i class="s">:</i> <i class="h">##</i><i class="s">:</i>
+ <i class="h">######</i><i class="s">::::</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i> <i class="h">##</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">::::&#x27;</i><i class="h">##</i><i class="s">:::.</i> <i class="h">##</i><i class="s">:::::::</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i> <i class="h">##</i> <i class="h">##</i><i class="s">:</i>
+ <i class="h">##</i><i class="s">...:::::</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">.</i> <i class="h">####</i><i class="s">:</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">::::</i> <i class="h">#########</i><i class="s">:::::::</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">.</i> <i class="h">####</i><i class="s">:</i>
+ <i class="h">##</i><i class="s">::::::::</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">:.</i> <i class="h">###</i><i class="s">:</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">....</i> <i class="h">##</i><i class="s">:::::::</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">:.</i> <i class="h">###</i><i class="s">:</i>
+ <i class="h">##</i><i class="s">:::::::&#x27;</i><i class="h">####</i><i class="s">:</i> <i class="h">##</i><i class="s">::.</i> <i class="h">##</i><i class="s">:</i> <i class="h">########</i><i class="s">:::::</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:::::::</i> <i class="h">##</i><i class="s">::::.</i> <i class="h">###</i><i class="s">.</i> <i class="h">###</i><i class="s">::&#x27;</i><i class="h">####</i><i class="s">:</i> <i class="h">##</i><i class="s">::.</i> <i class="h">##</i><i class="s">:</i>
+<i class="s">..::::::::....::..::::..::........::::::..:::::..::::::::..::::::...::...:::....::..::::..::</i></pre><ul class="notes"><li>paste one coin; we pull what is trending on Dexscreener right now</li><li>every candidate is compared candle by candle over the last 12 hours</li><li>sync = how often they move the same way at the same time</li><li>click a match to open the pair in the lab</li></ul></header>
+    <form class="findbar" id="findForm" autocomplete="off"><span class="mono">$</span><input id="fA" placeholder="any coin's contract address" spellcheck="false" aria-label="Contract address"><button class="btn pri" type="submit">Find its twin</button></form>
+    <div class="mlist" id="mList"></div>
+  </section>
+
+  <section class="sec" id="bind">
+    <header class="sh"><h2 class="sr">BIND</h2><pre class="fig" aria-hidden="true"><i class="s">&#x27;</i><i class="h">########</i><i class="s">::&#x27;</i><i class="h">####</i><i class="s">:&#x27;</i><i class="h">##</i><i class="s">:::</i> <i class="h">##</i><i class="s">:&#x27;</i><i class="h">########</i><i class="s">::</i>
+ <i class="h">##</i><i class="s">....</i> <i class="h">##</i><i class="s">:.</i> <i class="h">##</i><i class="s">::</i> <i class="h">###</i><i class="s">::</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">....</i> <i class="h">##</i><i class="s">:</i>
+ <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">::</i> <i class="h">####</i><i class="s">:</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:</i>
+ <i class="h">########</i><i class="s">:::</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i> <i class="h">##</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:</i>
+ <i class="h">##</i><i class="s">....</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">.</i> <i class="h">####</i><i class="s">:</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:</i>
+ <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">:.</i> <i class="h">###</i><i class="s">:</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:</i>
+ <i class="h">########</i><i class="s">::&#x27;</i><i class="h">####</i><i class="s">:</i> <i class="h">##</i><i class="s">::.</i> <i class="h">##</i><i class="s">:</i> <i class="h">########</i><i class="s">::</i>
+<i class="s">........:::....::..::::..::........:::</i></pre><ul class="notes"><li>01 pick the two coins (each needs real liquidity)</li><li>02 set the rules: band, buy size, trim size, cooldown, caps</li><li>03 send SOL to a fresh public maker wallet, signed in your own wallet</li><li>withdraw any time: both coins sold, every lamport sent back to you</li></ul></header>
+    <div class="console panel">
+      <ol class="steps" id="steps"><li class="on" data-k="1"><b>01</b>coins</li><li data-k="2"><b>02</b>rules</li><li data-k="3"><b>03</b>fund</li></ol>
+      <div class="stepv on" data-k="1">
+        <div class="pickrow">
+          <div class="pick" id="pkA"><label class="mono" for="bA">COIN A</label><input id="bA" placeholder="contract address" spellcheck="false"><div class="pcard" id="pcA"></div></div>
+          <div class="bond" aria-hidden="true"><canvas id="bondC" width="120" height="60"></canvas></div>
+          <div class="pick" id="pkB"><label class="mono" for="bB">COIN B</label><input id="bB" placeholder="contract address" spellcheck="false"><div class="pcard" id="pcB"></div></div>
+        </div>
+        <p class="err" id="e1"></p>
+        <div class="nav2"><span></span><button class="btn pri" type="button" id="to2" disabled>Next: rules</button></div>
+      </div>
+      <div class="stepv" data-k="2">
+        <div class="rules">
+          <div class="ctl"><label>band <b id="wBand"></b><small>how far apart before the maker steps in</small></label><input type="range" id="rBand" min="2" max="40" step="1"></div>
+          <div class="ctl"><label>buy laggard <b id="wBuy"></b><small>share of free SOL per buy</small></label><input type="range" id="rBuy" min="5" max="60" step="1"></div>
+          <div class="ctl"><label>trim leader <b id="wTrim"></b><small>share of the leader sold each step</small></label><input type="range" id="rTrim" min="0" max="100" step="5"></div>
+          <div class="ctl"><label>cooldown <b id="wCool"></b><small>minimum time between steps</small></label><input type="range" id="rCool" min="1" max="120" step="1"></div>
+          <div class="ctl"><label>max per trade <b id="wMax"></b><small>SOL, hard cap</small></label><input type="range" id="rMax" min="0.01" max="5" step="0.01"></div>
+          <div class="ctl"><label>max price impact <b id="wImp"></b><small>skip a trade above this</small></label><input type="range" id="rImp" min="0.5" max="10" step="0.5"></div>
+        </div>
+        <div class="preview" id="rPrev"></div>
+        <div class="nav2"><button class="btn" type="button" data-back="1">Back</button><button class="btn pri" type="button" id="to3">Next: fund</button></div>
+      </div>
+      <div class="stepv" data-k="3">
+        <div class="fund">
+          <div class="amt"><label class="mono" for="fAmt">SOL TO PUT TO WORK</label><div class="amtrow"><input id="fAmt" type="number" min="0.05" step="0.01" value="0.25" inputmode="decimal"><span class="mono">SOL</span></div>
+            <div class="presets"><button type="button" data-amt="0.1">0.1</button><button type="button" data-amt="0.25">0.25</button><button type="button" data-amt="0.5">0.5</button><button type="button" data-amt="1">1</button></div></div>
+          <ul class="facts" id="facts"></ul>
+        </div>
+        <button class="btn pri wide" type="button" id="goBind">Create the maker and fund it</button>
+        <div id="bindOut"></div>
+        <p class="err" id="e3"></p>
+        <div class="nav2"><button class="btn" type="button" data-back="2">Back</button><span></span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="twins">
+    <header class="sh"><h2 class="sr">TWINS</h2><pre class="fig" aria-hidden="true"><i class="s">&#x27;</i><i class="h">########</i><i class="s">:&#x27;</i><i class="h">##</i><i class="s">:::::&#x27;</i><i class="h">##</i><i class="s">:&#x27;</i><i class="h">####</i><i class="s">:&#x27;</i><i class="h">##</i><i class="s">:::</i> <i class="h">##</i><i class="s">::&#x27;</i><i class="h">######</i><i class="s">::</i>
+<i class="s">...</i> <i class="h">##</i><i class="s">..::</i> <i class="h">##</i><i class="s">:&#x27;</i><i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">:.</i> <i class="h">##</i><i class="s">::</i> <i class="h">###</i><i class="s">::</i> <i class="h">##</i><i class="s">:&#x27;</i><i class="h">##</i><i class="s">...</i> <i class="h">##</i><i class="s">:</i>
+<i class="s">:::</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">::</i> <i class="h">####</i><i class="s">:</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">:::..::</i>
+<i class="s">:::</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i> <i class="h">##</i> <i class="h">##</i><i class="s">:.</i> <i class="h">######</i><i class="s">::</i>
+<i class="s">:::</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">.</i> <i class="h">####</i><i class="s">::.....</i> <i class="h">##</i><i class="s">:</i>
+<i class="s">:::</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">:.</i> <i class="h">###</i><i class="s">:&#x27;</i><i class="h">##</i><i class="s">:::</i> <i class="h">##</i><i class="s">:</i>
+<i class="s">:::</i> <i class="h">##</i><i class="s">::::.</i> <i class="h">###</i><i class="s">.</i> <i class="h">###</i><i class="s">::&#x27;</i><i class="h">####</i><i class="s">:</i> <i class="h">##</i><i class="s">::.</i> <i class="h">##</i><i class="s">:.</i> <i class="h">######</i><i class="s">::</i>
+<i class="s">:::..::::::...::...:::....::..::::..:::......:::</i></pre><ul class="notes"><li>every maker running right now, live from the engine</li><li>each card: the gap between the two coins, the maker value, its trades</li><li>open one to see its wallet, every trade on Solscan and its full log</li></ul></header>
+    <div class="tabs big" id="twTabs"><button type="button" data-v="live" class="on">live</button><button type="button" data-v="mine">mine</button></div>
+    <div class="twgrid" id="twGrid"><div class="empty">Reading the engine…</div></div>
+  </section>
+
+  <section class="sec" id="engine">
+    <header class="sh"><h2 class="sr">ENGINE</h2><pre class="fig" aria-hidden="true"><i class="s">&#x27;</i><i class="h">########</i><i class="s">:&#x27;</i><i class="h">##</i><i class="s">:::</i> <i class="h">##</i><i class="s">::&#x27;</i><i class="h">######</i><i class="s">:::&#x27;</i><i class="h">####</i><i class="s">:&#x27;</i><i class="h">##</i><i class="s">:::</i> <i class="h">##</i><i class="s">:&#x27;</i><i class="h">########</i><i class="s">:</i>
+ <i class="h">##</i><i class="s">.....::</i> <i class="h">###</i><i class="s">::</i> <i class="h">##</i><i class="s">:&#x27;</i><i class="h">##</i><i class="s">...</i> <i class="h">##</i><i class="s">::.</i> <i class="h">##</i><i class="s">::</i> <i class="h">###</i><i class="s">::</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">.....::</i>
+ <i class="h">##</i><i class="s">:::::::</i> <i class="h">####</i><i class="s">:</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">:::..::::</i> <i class="h">##</i><i class="s">::</i> <i class="h">####</i><i class="s">:</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">:::::::</i>
+ <i class="h">######</i><i class="s">:::</i> <i class="h">##</i> <i class="h">##</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">::&#x27;</i><i class="h">####</i><i class="s">::</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i> <i class="h">##</i> <i class="h">##</i><i class="s">:</i> <i class="h">######</i><i class="s">:::</i>
+ <i class="h">##</i><i class="s">...::::</i> <i class="h">##</i><i class="s">.</i> <i class="h">####</i><i class="s">:</i> <i class="h">##</i><i class="s">:::</i> <i class="h">##</i><i class="s">:::</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">.</i> <i class="h">####</i><i class="s">:</i> <i class="h">##</i><i class="s">...::::</i>
+ <i class="h">##</i><i class="s">:::::::</i> <i class="h">##</i><i class="s">:.</i> <i class="h">###</i><i class="s">:</i> <i class="h">##</i><i class="s">:::</i> <i class="h">##</i><i class="s">:::</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">:.</i> <i class="h">###</i><i class="s">:</i> <i class="h">##</i><i class="s">:::::::</i>
+ <i class="h">########</i><i class="s">:</i> <i class="h">##</i><i class="s">::.</i> <i class="h">##</i><i class="s">:.</i> <i class="h">######</i><i class="s">:::&#x27;</i><i class="h">####</i><i class="s">:</i> <i class="h">##</i><i class="s">::.</i> <i class="h">##</i><i class="s">:</i> <i class="h">########</i><i class="s">:</i>
+<i class="s">........::..::::..:::......::::....::..::::..::........::</i></pre><ul class="notes"><li>a pass runs every few minutes for every live twin</li><li>it reads both prices from Jupiter, measures the gap, and checks the band</li><li>a new band step means: trim the leader, then buy the laggard</li><li>then it waits for the gap to open another step, or to close</li></ul></header>
+    <div class="pipe panel" id="pipe"><span class="packet" aria-hidden="true"></span>
+      <div class="node" data-n="0"><b>01</b><span>read both prices</span></div><div class="arrow">→</div>
+      <div class="node" data-n="1"><b>02</b><span>measure the gap</span></div><div class="arrow">→</div>
+      <div class="node" data-n="2"><b>03</b><span>past the band?</span></div><div class="arrow">→</div>
+      <div class="node" data-n="3"><b>04</b><span>trim the leader</span></div><div class="arrow">→</div>
+      <div class="node" data-n="4"><b>05</b><span>buy the laggard</span></div><div class="arrow">→</div>
+      <div class="node" data-n="5"><b>06</b><span>wait, repeat</span></div>
+    </div>
+    <pre class="ascii" id="pipeAscii" aria-hidden="true"></pre>
+    <div class="rules2">
+      <div><b>No wash trading.</b> A twin's maker never trades against itself. It only buys the coin that's behind and sells the one that's ahead.</div>
+      <div><b>Steps, not spam.</b> It acts once each time the gap opens a new band step, then waits until the gap widens again or closes.</div>
+      <div><b>Guard rails.</b> Max per trade, a price-impact limit, a SOL reserve for fees, and a {MAX} SOL cap per maker.</div>
+      <div><b>Your SOL goes home only.</b> Withdraw sells both coins and sends every lamport to the owner's wallet. Nothing else can.</div>
+    </div>
+  </section>
+
+  <section class="sec" id="faq">
+    <header class="sh"><h2 class="sr">FAQ</h2><pre class="fig" aria-hidden="true"><i class="s">&#x27;</i><i class="h">########</i><i class="s">::::&#x27;</i><i class="h">###</i><i class="s">:::::&#x27;</i><i class="h">#######</i><i class="s">::</i>
+ <i class="h">##</i><i class="s">.....::::&#x27;</i><i class="h">##</i> <i class="h">##</i><i class="s">:::&#x27;</i><i class="h">##</i><i class="s">....</i> <i class="h">##</i><i class="s">:</i>
+ <i class="h">##</i><i class="s">::::::::&#x27;</i><i class="h">##</i><i class="s">:.</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:</i>
+ <i class="h">######</i><i class="s">:::&#x27;</i><i class="h">##</i><i class="s">:::.</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:</i>
+ <i class="h">##</i><i class="s">...::::</i> <i class="h">#########</i><i class="s">:</i> <i class="h">##</i><i class="s">:&#x27;</i><i class="h">##</i> <i class="h">##</i><i class="s">:</i>
+ <i class="h">##</i><i class="s">:::::::</i> <i class="h">##</i><i class="s">....</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">:..</i> <i class="h">##</i><i class="s">::</i>
+ <i class="h">##</i><i class="s">:::::::</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">::</i> <i class="h">#####</i> <i class="h">##</i><i class="s">:</i>
+<i class="s">..::::::::..:::::..:::.....:..::</i></pre><ul class="notes"><li>the honest answers</li></ul></header>
+    <div class="qa">
+      <details><summary>What is TWIN?</summary><div class="ans"><p>Bind two coins to one market maker. When one runs ahead of the other, the maker trims the leader and buys the laggard, so the two charts move together.</p></div></details>
+      <details><summary>Where does the maker's SOL come from?</summary><div class="ans"><p>From you. You fund a maker wallet that TWIN creates for your twin, and you can add more or take everything back whenever you want.</p></div></details>
+      <details><summary>Who holds the maker wallet?</summary><div class="ans"><p>The TWIN engine signs its trades, so it holds the keys while the maker runs. The wallet is public, every trade is on chain, and withdrawals can only ever go to the wallet that created the twin.</p></div></details>
+      <details><summary>Can it lose money?</summary><div class="ans"><p>Yes. Buying the coin that's behind can mean buying a coin that keeps falling. The band, trade sizes, impact limit and the per-maker cap limit the damage. Never fund it with SOL you need.</p></div></details>
+      <details><summary>Is the Sync Lab replay a promise?</summary><div class="ans"><p>No. It runs the same rules over the last day of real candles. Real fills, fees and slippage will differ.</p></div></details>
+      <details><summary>What does it cost?</summary><div class="ans"><p>TWIN takes no fee. The maker pays normal Solana fees and the swap's price impact.</p></div></details>
+    </div>
+  </section>
+</main>
+
+<div class="sheet" id="sheet" aria-hidden="true"><div class="shade" data-close></div><div class="spanel" id="sPanel"></div></div>
+<div class="cmd" id="cmd" hidden><div class="cbox"><span class="mono">&gt;</span><input id="cmdIn" placeholder="sync A B · find A · bind A B · twin 1 · twins · help" spellcheck="false" autocomplete="off"></div><div class="cout mono" id="cmdOut"></div></div>
+<p class="sr" id="srlive" aria-live="polite"></p>
+<script src="/js/web3.min.js" defer></script>
+<script src="/js/ascii.js" defer></script>
+<script src="/js/twin.js" defer></script>
+</body>
+</html>
