@@ -1,0 +1,12 @@
+name: engine
+on:
+  schedule: [{ cron: '*/5 * * * *' }]
+  workflow_dispatch: {}
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: run engine passes for 4 minutes
+        run: |
+          for i in 1 2 3 4 5 6 7 8; do curl -s -m 28 https://twin-tawny-alpha.vercel.app/api/tick || true; echo; sleep 30; done
