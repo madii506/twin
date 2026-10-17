@@ -138,6 +138,51 @@
     line(a, GA); if (b) line(b, GB, true);
   }
 
+  /* ---------------- live scan: pump.fun coins moving right now, rescanned every minute ---------------- */
+  const SC = { tab: 'trending', list: [], sort: null, at: 0, next: 60, q: '' };
+  const PK = { A: null, B: null };
+  const pctc = v => v == null ? '<b class="num">—</b>' : `<b class="num ${v >= 0 ? 'up' : 'dn'}">${v >= 0 ? '+' : ''}${(+v).toFixed(1)}%</b>`;
+  const bar = v => v == null ? '' : `<span class="bar ${v < 0 ? 'dn' : ''}">${'▮'.repeat(Math.max(1, Math.min(12, Math.round(Math.abs(v) / 1.5))))}</span>`;
+  async function loadScan(quiet) {
+    try {
+      const r = await api('scan?tab=' + SC.tab), prev = new Map(SC.list.map(x => [x.mint, x]));
+      SC.list = r.list; SC.at = r.at || Date.now(); SC.next = 60; renderScan(prev, quiet);
+      if (quiet) { const n = r.list.filter(x => !prev.has(x.mint)).length; if (n) say(`${n} new coins on the scan`); }
+    } catch (e) { if (!quiet) $('#scList').innerHTML = `<div class="empty">${esc(e.message)}</div>`; }
+  }
+  function renderScan(prev = new Map(), quiet) {
+    let l = SC.list.slice(); const q = SC.q.toLowerCase(); if (q) l = l.filter(x => (x.symbol + ' ' + x.name + ' ' + x.mint).toLowerCase().includes(q));
+    if (SC.sort) l.sort((a, b) => SC.sort === 'symbol' ? a.symbol.localeCompare(b.symbol) : (b[SC.sort] ?? -1e18) - (a[SC.sort] ?? -1e18));
+    $('#scList').innerHTML = l.length ? l.map(x => {
+      const p = prev.get(x.mint), isNew = quiet && !p, changed = p && (p.mc !== x.mc || p.ch5 !== x.ch5), thin = (x.liq || 0) < (S.cfg.minLiq || 3000);
+      return `<div class="srow${isNew ? ' new' : ''}${changed ? ' tick' : ''}${thin ? ' thin' : ''}" data-mint="${esc(x.mint)}"><span class="nm">${av(x)}<span style="min-width:0"><b>$${esc(x.symbol)}</b><small>${esc(x.name)}${x.created ? ' · ' + ago(x.created) : ''}${x.bonded ? ' · bonded' : ''}</small></span></span><span><b class="num">${usd(x.mc)}</b></span><span class="c3">${pctc(x.ch5)}${bar(x.ch5)}</span><span class="c4">${pctc(x.ch1h)}</span><span class="c5">${usd(x.vol1h)}</span><span class="c6">${usd(x.liq)}</span><span class="c7">${(x.holders || 0).toLocaleString()}</span><span class="pk"><button type="button" data-pk="A" data-m="${esc(x.mint)}" class="${PK.A && PK.A.mint === x.mint ? 'on' : ''}" title="Pick as coin A">A</button><button type="button" data-pk="B" data-m="${esc(x.mint)}" class="${PK.B && PK.B.mint === x.mint ? 'on' : ''}" title="Pick as coin B">B</button></span></div>`;
+    }).join('') : `<div class="empty">${q ? 'Nothing matches that filter.' : 'Nothing on this board right now. Try another tab.'}</div>`;
+  }
+  setInterval(() => {
+    if (!SC.at) return; const s = Math.round((Date.now() - SC.at) / 1000); $('#scAge').textContent = 'scanned ' + (s < 3 ? 'just now' : s + 's ago');
+    SC.next = Math.max(0, SC.next - 1); $('#scNext').textContent = SC.next; $('#scRing').style.strokeDashoffset = String(94.25 * (1 - SC.next / 60));
+    if (SC.next === 0 && !document.hidden) { SC.next = 60; loadScan(true); }
+  }, 1000);
+  $('#scTabs').addEventListener('click', e => { const b = e.target.closest('[data-tab]'); if (!b) return; SC.tab = b.dataset.tab; $$('#scTabs button').forEach(x => x.classList.toggle('on', x === b)); $('#scList').innerHTML = '<div class="empty">Scanning…</div>'; SC.list = []; loadScan(false); });
+  $$('.shead2 [data-sort]').forEach(b => b.onclick = () => { SC.sort = SC.sort === b.dataset.sort ? null : b.dataset.sort; $$('.shead2 [data-sort]').forEach(x => x.classList.toggle('on', x.dataset.sort === SC.sort)); renderScan(); });
+  $('#scQ').addEventListener('input', e => { SC.q = e.target.value.trim(); renderScan(); });
+  // the pair tray: what you picked from the scan
+  function renderTray() { document.body.classList.toggle('trayon', !!(PK.A || PK.B));
+    const t = $('#tray'); t.hidden = !(PK.A || PK.B); t.classList.toggle('both', !!(PK.A && PK.B));
+    for (const k of ['A', 'B']) { const el = $('#t' + k), c = PK[k]; el.classList.toggle('on', !!c); el.innerHTML = `<span class="tl2">${k}</span>` + (c ? `${av(c)}$${esc(c.symbol)}` : '<em>pick a coin</em>'); }
+    $('#tSync').disabled = $('#tBind').disabled = !(PK.A && PK.B); $('#tFind').disabled = !PK.A;
+    if (PK.A) $('#hA').value = PK.A.mint; if (PK.B) $('#hB').value = PK.B.mint; $('#pairBar').classList.toggle('ready', !!(PK.A && PK.B));
+  }
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-pk]'); if (!b) return; const c = SC.list.find(x => x.mint === b.dataset.m); if (!c) return; const k = b.dataset.pk, o = k === 'A' ? 'B' : 'A';
+    if (PK[o] && PK[o].mint === c.mint) PK[o] = null; PK[k] = PK[k] && PK[k].mint === c.mint ? null : c; renderTray(); renderScan();
+    if (PK.A && PK.B) toast(`$${PK.A.symbol} × $${PK.B.symbol} ready. Sync them or bind them.`);
+  });
+  $('#tSync').onclick = () => { if (!(PK.A && PK.B)) return; coins.pulse(); loadLab(PK.A.mint, PK.B.mint); goTo('lab'); };
+  $('#tBind').onclick = () => { if (!(PK.A && PK.B)) return; $('#bA').value = PK.A.mint; $('#bB').value = PK.B.mint; pick('A'); pick('B'); step(1); goTo('bind'); };
+  $('#tFind').onclick = () => { if (!PK.A) return; $('#fA').value = PK.A.mint; goTo('find'); $('#findForm').requestSubmit(); };
+  $('#tClear').onclick = () => { PK.A = PK.B = null; renderTray(); renderScan(); };
+
   /* ---------------- the sync lab ---------------- */
   const L = { rows: null, a: null, b: null, tf: '5m', pos: 1, playing: false };
   const ctl = { band: $('#sBand'), buy: $('#sBuy'), trim: $('#sTrim'), cool: $('#sCool') };
@@ -400,7 +445,7 @@
   /* ---------------- start ---------------- */
   renderMe();
   api('config').then(c => { S.cfg = c; for (const k in RULE) { const map = { band: 'band', buy: 'buy', trim: 'trim', cool: 'cooldown', max: 'maxTrade', imp: 'impact' }; setRule(k, c.defaults[map[k]]); } setCtl('band', c.defaults.band); setCtl('buy', c.defaults.buy); setCtl('trim', c.defaults.trim); setCtl('cool', c.defaults.cooldown); if (mx) mx.innerHTML = mx.innerHTML.replace(/\d+(\.\d+)? SOL cap/, c.maxSol + ' SOL cap'); facts(); }).catch(() => { for (const k in RULE) setRule(k, $(RULE[k][0]).value); });
-  drawGauge(0); loadTwins(); loadStats();
+  drawGauge(0); loadTwins(); loadStats(); loadScan(false);
   setInterval(() => { if (!document.hidden) { loadStats(); loadTwins(); if (S.sheet) openTwin(S.sheet); } }, 30000);
   const saved = (store.get('tw:lab') || '').split('|'); if (B58.test(saved[0] || '') && B58.test(saved[1] || '')) loadLab(saved[0], saved[1]);
   const deep = (location.hash.match(/^#t=(\d+)/) || [])[1]; if (deep) setTimeout(() => openTwin(+deep), 400);
