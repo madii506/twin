@@ -21,7 +21,7 @@
 <div class="progress" id="progress" aria-hidden="true"></div>
 <nav id="nav">
   <div class="links" id="links">
-    <a href="#lab" data-s="lab">Lab</a><a href="#find" data-s="find">Find</a><a href="#bind" data-s="bind">Bind</a><a href="#twins" data-s="twins">Twins</a><a href="#engine" data-s="engine">Engine</a><a href="#faq" data-s="faq">FAQ</a>
+    <a href="#scan" data-s="scan">Scan</a><a href="#lab" data-s="lab">Lab</a><a href="#find" data-s="find">Find</a><a href="#bind" data-s="bind">Bind</a><a href="#twins" data-s="twins">Twins</a><a href="#engine" data-s="engine">Engine</a><a href="#faq" data-s="faq">FAQ</a><a href="/docs" class="doc">Docs</a>
     <span class="ind" id="ind"></span>
   </div>
   <button class="kbd" id="cmdBtn" type="button" title="Command bar (/)">/</button>
@@ -40,9 +40,30 @@
         <label class="slot"><span>B</span><input id="hB" placeholder="coin B contract" spellcheck="false" aria-label="Coin B contract address"></label>
         <button class="btn pri" type="submit">Sync them</button>
       </form>
-      <p class="hint">no B? <button type="button" class="ul" data-go="find">find a twin for any coin</button></p>
+      <p class="hint">no idea? <button type="button" class="ul" data-go="scan">pick from what's moving on pump.fun right now</button> or <button type="button" class="ul" data-go="find">find a twin for any coin</button></p>
     </div>
     <div class="tape" id="tape" hidden><span class="tl"><i class="dot"></i>ENGINE</span><div class="tw"><div class="tin" id="tapeIn"></div></div></div>
+  </section>
+
+
+  <section class="sec" id="scan">
+    <header class="sh"><h2 class="sr">SCAN</h2><pre class="fig" aria-hidden="true"><i class="s">:&#x27;</i><i class="h">######</i><i class="s">:::&#x27;</i><i class="h">######</i><i class="s">:::::&#x27;</i><i class="h">###</i><i class="s">::::&#x27;</i><i class="h">##</i><i class="s">:::</i> <i class="h">##</i><i class="s">:</i>
+<i class="s">&#x27;</i><i class="h">##</i><i class="s">...</i> <i class="h">##</i><i class="s">:&#x27;</i><i class="h">##</i><i class="s">...</i> <i class="h">##</i><i class="s">:::&#x27;</i><i class="h">##</i> <i class="h">##</i><i class="s">:::</i> <i class="h">###</i><i class="s">::</i> <i class="h">##</i><i class="s">:</i>
+ <i class="h">##</i><i class="s">:::..::</i> <i class="h">##</i><i class="s">:::..:::&#x27;</i><i class="h">##</i><i class="s">:.</i> <i class="h">##</i><i class="s">::</i> <i class="h">####</i><i class="s">:</i> <i class="h">##</i><i class="s">:</i>
+<i class="s">.</i> <i class="h">######</i><i class="s">::</i> <i class="h">##</i><i class="s">:::::::&#x27;</i><i class="h">##</i><i class="s">:::.</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i> <i class="h">##</i> <i class="h">##</i><i class="s">:</i>
+<i class="s">:.....</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">:::::::</i> <i class="h">#########</i><i class="s">:</i> <i class="h">##</i><i class="s">.</i> <i class="h">####</i><i class="s">:</i>
+<i class="s">&#x27;</i><i class="h">##</i><i class="s">:::</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">:::</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">....</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">:.</i> <i class="h">###</i><i class="s">:</i>
+<i class="s">.</i> <i class="h">######</i><i class="s">::.</i> <i class="h">######</i><i class="s">::</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">::.</i> <i class="h">##</i><i class="s">:</i>
+<i class="s">:......::::......:::..:::::..::..::::..::</i></pre><ul class="notes"><li>every pump.fun coin moving right now, from Jupiter&#x27;s 5-minute boards</li><li>rescanned every minute: new names flash in, numbers update in place</li><li>tap A or B on any row to load it into the pair tray at the bottom</li><li>pick both and sync them, or pick one and let TWIN find its twin</li><li>a maker needs real liquidity, so coins under $3K liquidity are marked</li></ul><p class="lede">Pairs work best when both coins already have buyers. This board is the shortlist: what's getting bought on pump.fun this minute, straight from Jupiter, with the numbers a maker cares about. Pick two that share a story, or one strong chart and let TWIN find its partner. <a class="ul" href="/docs#scan">how the scan works →</a></p></header>
+    <div class="panel scanp">
+      <div class="sbar">
+        <div class="tabs" id="scTabs"><button type="button" data-tab="trending" class="on">trending 5m</button><button type="button" data-tab="traded">most traded</button><button type="button" data-tab="organic">organic</button><button type="button" data-tab="new">new</button></div>
+        <label class="sfind"><span class="mono">/</span><input id="scQ" placeholder="filter by name or ticker" spellcheck="false" aria-label="Filter coins"></label>
+        <div class="sclock mono"><i class="dot"></i><span id="scAge">scanning…</span><span class="ring"><svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15"/><circle id="scRing" cx="18" cy="18" r="15"/></svg><b id="scNext">60</b></span></div>
+      </div>
+      <div class="shead2 mono"><button type="button" data-sort="symbol">coin</button><button type="button" data-sort="mc">mcap</button><button type="button" data-sort="ch5">5m</button><button type="button" data-sort="ch1h">1h</button><button type="button" data-sort="vol1h">vol 1h</button><button type="button" data-sort="liq">liquidity</button><button type="button" data-sort="holders">holders</button><span>pair</span></div>
+      <div class="slist" id="scList"><div class="empty">Reading pump.fun…</div></div>
+    </div>
   </section>
 
   <section class="sec lab" id="lab">
@@ -53,7 +74,7 @@
 <i class="s">:.....</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">.</i> <i class="h">####</i><i class="s">:</i> <i class="h">##</i><i class="s">::::::::::</i> <i class="h">##</i><i class="s">:::::::</i> <i class="h">#########</i><i class="s">:</i> <i class="h">##</i><i class="s">....</i> <i class="h">##</i><i class="s">:</i>
 <i class="s">&#x27;</i><i class="h">##</i><i class="s">:::</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:.</i> <i class="h">###</i><i class="s">:</i> <i class="h">##</i><i class="s">:::</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:::::::</i> <i class="h">##</i><i class="s">....</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:</i>
 <i class="s">.</i> <i class="h">######</i><i class="s">:::::</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">::.</i> <i class="h">##</i><i class="s">:.</i> <i class="h">######</i><i class="s">:::::</i> <i class="h">########</i><i class="s">:</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:</i> <i class="h">########</i><i class="s">::</i>
-<i class="s">:......::::::..:::::..::::..:::......::::::........::..:::::..::........:::</i></pre><ul class="notes"><li>real 5m, 15m or 1h candles from GeckoTerminal for both coins</li><li>both rebased to 100 so you can see who runs ahead</li><li>the gap below is the distance between them; the band is where the maker steps in</li><li>drag the band, move the sliders: the replay reruns the maker on those candles</li></ul></header>
+<i class="s">:......::::::..:::::..::::..:::......::::::........::..:::::..::........:::</i></pre><ul class="notes"><li>real 5m, 15m or 1h candles from GeckoTerminal for both coins</li><li>both rebased to 100 so you can see who runs ahead</li><li>the gap below is the distance between them; the band is where the maker steps in</li><li>drag the band, move the sliders: the replay reruns the maker on those candles</li></ul><p class="lede">Before a single SOL moves, the lab shows how two coins actually behaved together and what the maker would have done. High sync means they already move as one and the maker only nudges the laggard. Low sync means more trades and more risk. Same rule as the live engine, on real candles. <a class="ul" href="/docs#lab">the replay math →</a></p></header>
     <div class="labgrid">
       <div class="panel chartp">
         <div class="pbar">
@@ -64,7 +85,7 @@
           <canvas id="cPrice" aria-label="Both coins, rebased to 100"></canvas>
           <canvas id="cSpread" aria-label="The gap between them, with the band"></canvas>
           <div class="xh" id="xh" hidden></div>
-          <div class="empty big" id="labEmpty">Paste two contracts above, or try <button type="button" class="ul" id="labDemo">two trending coins</button>.</div>
+          <div class="empty big" id="labEmpty"><span>Paste two contracts above, pick A and B in the <button type="button" class="ul" data-go="scan">live scan</button>, or try <button type="button" class="ul" id="labDemo">two trending coins</button>.</span></div>
         </div>
         <div class="scrub"><button type="button" class="link" id="play" title="Replay">▶</button><input type="range" id="scrub" min="0" max="1000" value="1000" aria-label="Replay position"><span class="mono" id="scrubT">—</span></div>
       </div>
@@ -88,7 +109,7 @@
  <i class="h">##</i><i class="s">...:::::</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">.</i> <i class="h">####</i><i class="s">:</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">::::</i> <i class="h">#########</i><i class="s">:::::::</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">.</i> <i class="h">####</i><i class="s">:</i>
  <i class="h">##</i><i class="s">::::::::</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">:.</i> <i class="h">###</i><i class="s">:</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">....</i> <i class="h">##</i><i class="s">:::::::</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">:.</i> <i class="h">###</i><i class="s">:</i>
  <i class="h">##</i><i class="s">:::::::&#x27;</i><i class="h">####</i><i class="s">:</i> <i class="h">##</i><i class="s">::.</i> <i class="h">##</i><i class="s">:</i> <i class="h">########</i><i class="s">:::::</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:::::::</i> <i class="h">##</i><i class="s">::::.</i> <i class="h">###</i><i class="s">.</i> <i class="h">###</i><i class="s">::&#x27;</i><i class="h">####</i><i class="s">:</i> <i class="h">##</i><i class="s">::.</i> <i class="h">##</i><i class="s">:</i>
-<i class="s">..::::::::....::..::::..::........::::::..:::::..::::::::..::::::...::...:::....::..::::..::</i></pre><ul class="notes"><li>paste one coin; we pull what is trending on Dexscreener right now</li><li>every candidate is compared candle by candle over the last 12 hours</li><li>sync = how often they move the same way at the same time</li><li>click a match to open the pair in the lab</li></ul></header>
+<i class="s">..::::::::....::..::::..::........::::::..:::::..::::::::..::::::...::...:::....::..::::..::</i></pre><ul class="notes"><li>paste one coin; we pull what people are boosting on Dexscreener right now</li><li>every candidate is compared candle by candle over the last 12 hours</li><li>sync = how often they move the same way at the same time</li><li>click a match to open the pair in the lab</li></ul><p class="lede">Most people already hold one coin they believe in. Find takes that coin and scores the coins getting attention right now by how closely their charts follow it, so the twin you bind already rides the same wave. <a class="ul" href="/docs#find">how matches are ranked →</a></p></header>
     <form class="findbar" id="findForm" autocomplete="off"><span class="mono">$</span><input id="fA" placeholder="any coin's contract address" spellcheck="false" aria-label="Contract address"><button class="btn pri" type="submit">Find its twin</button></form>
     <div class="mlist" id="mList"></div>
   </section>
@@ -101,7 +122,7 @@
  <i class="h">##</i><i class="s">....</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">.</i> <i class="h">####</i><i class="s">:</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:</i>
  <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">:.</i> <i class="h">###</i><i class="s">:</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:</i>
  <i class="h">########</i><i class="s">::&#x27;</i><i class="h">####</i><i class="s">:</i> <i class="h">##</i><i class="s">::.</i> <i class="h">##</i><i class="s">:</i> <i class="h">########</i><i class="s">::</i>
-<i class="s">........:::....::..::::..::........:::</i></pre><ul class="notes"><li>01 pick the two coins (each needs real liquidity)</li><li>02 set the rules: band, buy size, trim size, cooldown, caps</li><li>03 send SOL to a fresh public maker wallet, signed in your own wallet</li><li>withdraw any time: both coins sold, every lamport sent back to you</li></ul></header>
+<i class="s">........:::....::..::::..::........:::</i></pre><ul class="notes"><li>01 pick the two coins (each needs real liquidity)</li><li>02 set the rules: band, buy size, trim size, cooldown, caps</li><li>03 send SOL to a fresh public maker wallet, signed in your own wallet</li><li>withdraw any time: both coins sold, every lamport sent back to you</li></ul><p class="lede">Binding takes about a minute. TWIN creates a maker wallet used for this twin only, you send it SOL from your own wallet, and it goes live at that moment's prices. From then on it's yours to pause, retune or empty. <a class="ul" href="/docs#custody">custody and withdrawals →</a></p></header>
     <div class="console panel">
       <ol class="steps" id="steps"><li class="on" data-k="1"><b>01</b>coins</li><li data-k="2"><b>02</b>rules</li><li data-k="3"><b>03</b>fund</li></ol>
       <div class="stepv on" data-k="1">
@@ -147,7 +168,7 @@
 <i class="s">:::</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">.</i> <i class="h">####</i><i class="s">::.....</i> <i class="h">##</i><i class="s">:</i>
 <i class="s">:::</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">:.</i> <i class="h">###</i><i class="s">:&#x27;</i><i class="h">##</i><i class="s">:::</i> <i class="h">##</i><i class="s">:</i>
 <i class="s">:::</i> <i class="h">##</i><i class="s">::::.</i> <i class="h">###</i><i class="s">.</i> <i class="h">###</i><i class="s">::&#x27;</i><i class="h">####</i><i class="s">:</i> <i class="h">##</i><i class="s">::.</i> <i class="h">##</i><i class="s">:.</i> <i class="h">######</i><i class="s">::</i>
-<i class="s">:::..::::::...::...:::....::..::::..:::......:::</i></pre><ul class="notes"><li>every maker running right now, live from the engine</li><li>each card: the gap between the two coins, the maker value, its trades</li><li>open one to see its wallet, every trade on Solscan and its full log</li></ul></header>
+<i class="s">:::..::::::...::...:::....::..::::..:::......:::</i></pre><ul class="notes"><li>every maker running right now, live from the engine</li><li>each card: the gap between the two coins, the maker value, its trades</li><li>open one to see its wallet, every trade on Solscan and its full log</li></ul><p class="lede">Every twin on this board is real: a funded maker wallet on Solana with its trades and its log, readable by anyone. Open one to see exactly what it did and why. <a class="ul" href="/docs#life">the twin lifecycle →</a></p></header>
     <div class="tabs big" id="twTabs"><button type="button" data-v="live" class="on">live</button><button type="button" data-v="mine">mine</button></div>
     <div class="twgrid" id="twGrid"><div class="empty">Reading the engine…</div></div>
   </section>
@@ -160,7 +181,7 @@
  <i class="h">##</i><i class="s">...::::</i> <i class="h">##</i><i class="s">.</i> <i class="h">####</i><i class="s">:</i> <i class="h">##</i><i class="s">:::</i> <i class="h">##</i><i class="s">:::</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">.</i> <i class="h">####</i><i class="s">:</i> <i class="h">##</i><i class="s">...::::</i>
  <i class="h">##</i><i class="s">:::::::</i> <i class="h">##</i><i class="s">:.</i> <i class="h">###</i><i class="s">:</i> <i class="h">##</i><i class="s">:::</i> <i class="h">##</i><i class="s">:::</i> <i class="h">##</i><i class="s">::</i> <i class="h">##</i><i class="s">:.</i> <i class="h">###</i><i class="s">:</i> <i class="h">##</i><i class="s">:::::::</i>
  <i class="h">########</i><i class="s">:</i> <i class="h">##</i><i class="s">::.</i> <i class="h">##</i><i class="s">:.</i> <i class="h">######</i><i class="s">:::&#x27;</i><i class="h">####</i><i class="s">:</i> <i class="h">##</i><i class="s">::.</i> <i class="h">##</i><i class="s">:</i> <i class="h">########</i><i class="s">:</i>
-<i class="s">........::..::::..:::......::::....::..::::..::........::</i></pre><ul class="notes"><li>a pass runs every few minutes for every live twin</li><li>it reads both prices from Jupiter, measures the gap, and checks the band</li><li>a new band step means: trim the leader, then buy the laggard</li><li>then it waits for the gap to open another step, or to close</li></ul></header>
+<i class="s">........::..::::..:::......::::....::..::::..::........::</i></pre><ul class="notes"><li>a pass runs every few minutes for every live twin</li><li>it reads both prices from Jupiter, measures the gap, and checks the band</li><li>a new band step means: trim the leader, then buy the laggard</li><li>then it waits for the gap to open another step, or to close</li></ul><p class="lede">No black box. The engine runs one small rule, the same one you replayed in the lab, with hard limits: a cap on the SOL it puts to work, a reserve for fees, a skip on any swap with too much price impact, and a log line for every decision. <a class="ul" href="/docs#pass">the full engine pass →</a></p></header>
     <div class="pipe panel" id="pipe"><span class="packet" aria-hidden="true"></span>
       <div class="node" data-n="0"><b>01</b><span>read both prices</span></div><div class="arrow">→</div>
       <div class="node" data-n="1"><b>02</b><span>measure the gap</span></div><div class="arrow">→</div>
@@ -198,6 +219,7 @@
   </section>
 </main>
 
+<div class="tray" id="tray" hidden><div class="tslot" id="tA"><span class="tl2">A</span><em>pick a coin</em></div><span class="tlink" aria-hidden="true">=o=</span><div class="tslot" id="tB"><span class="tl2">B</span><em>pick a coin</em></div><div class="tacts"><button class="btn sm" type="button" id="tFind">Find A's twin</button><button class="btn sm pri" type="button" id="tSync">Sync</button><button class="btn sm" type="button" id="tBind">Bind</button><button class="link" type="button" id="tClear" title="Clear">×</button></div></div>
 <div class="sheet" id="sheet" aria-hidden="true"><div class="shade" data-close></div><div class="spanel" id="sPanel"></div></div>
 <div class="cmd" id="cmd" hidden><div class="cbox"><span class="mono">&gt;</span><input id="cmdIn" placeholder="sync A B · find A · bind A B · twin 1 · twins · help" spellcheck="false" autocomplete="off"></div><div class="cout mono" id="cmdOut"></div></div>
 <p class="sr" id="srlive" aria-live="polite"></p>

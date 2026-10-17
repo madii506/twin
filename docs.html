@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TWIN docs</title>
+<meta name="description" content="How TWIN binds two coins to one market maker: the gap, the band, the engine pass, custody, data sources, API and risks.">
+<meta name="theme-color" content="#eef9f2">
+<meta property="og:title" content="TWIN docs">
+<meta property="og:description" content="bind two coins to one market maker. when one pumps, both pump.">
+<meta property="og:image" content="/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="/img/og.png">
+<link rel="icon" href="/img/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/img/apple-touch.png">
+<link rel="preload" href="/fonts/jbm-800.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/css/twin.css">
+<link rel="stylesheet" href="/css/docs.css">
+</head>
+<body class="docs">
+<canvas id="rain" aria-hidden="true"></canvas>
+<div class="progress" id="progress" aria-hidden="true"></div>
+<nav id="nav">
+  <div class="links" id="links">
+    <a href="/#scan">Scan</a><a href="/#lab">Lab</a><a href="/#find">Find</a><a href="/#bind">Bind</a><a href="/#twins">Twins</a><a href="/#engine">Engine</a><a href="/#faq">FAQ</a><a href="/docs" class="doc on" aria-current="page">Docs</a>
+  </div>
+  <a class="wbtn" href="/#bind"><i></i><span class="lg">Open app</span><span class="sm2">App</span></a>
+</nav>
+
+<main class="dwrap">
+  <header class="dhead">
+    <h1 class="sr">TWIN docs</h1>
+    <pre class="fig vis" aria-hidden="true"><i class="s">&#x27;</i><i class="h">########</i><i class="s">:::&#x27;</i><i class="h">#######</i><i class="s">:::&#x27;</i><i class="h">######</i><i class="s">:::&#x27;</i><i class="h">######</i><i class="s">::</i>
+ <i class="h">##</i><i class="s">....</i> <i class="h">##</i><i class="s">:&#x27;</i><i class="h">##</i><i class="s">....</i> <i class="h">##</i><i class="s">:&#x27;</i><i class="h">##</i><i class="s">...</i> <i class="h">##</i><i class="s">:&#x27;</i><i class="h">##</i><i class="s">...</i> <i class="h">##</i><i class="s">:</i>
+ <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">:::..::</i> <i class="h">##</i><i class="s">:::..::</i>
+ <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">:::::::.</i> <i class="h">######</i><i class="s">::</i>
+ <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">::::::::.....</i> <i class="h">##</i><i class="s">:</i>
+ <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">::::</i> <i class="h">##</i><i class="s">:</i> <i class="h">##</i><i class="s">:::</i> <i class="h">##</i><i class="s">:&#x27;</i><i class="h">##</i><i class="s">:::</i> <i class="h">##</i><i class="s">:</i>
+ <i class="h">########</i><i class="s">::.</i> <i class="h">#######</i><i class="s">::.</i> <i class="h">######</i><i class="s">::.</i> <i class="h">######</i><i class="s">::</i>
+<i class="s">........::::.......::::......::::......:::</i></pre>
+    <p class="dlead">TWIN binds two coins to one market maker. When one runs ahead of the other, the maker takes a little profit off the leader and buys the laggard, so the chart that's behind gets bid and the pair moves back together. Everything below is how it works, what it costs, who holds what, and where every number comes from.</p>
+    <div class="dmeta mono"><span><i class="dot"></i><b id="cfgState">reading /api/config…</b></span><span>v1 · solana mainnet</span><span>source: every rule on this page is the code the engine runs</span></div>
+  </header>
+
+  <div class="dgrid">
+    <aside class="toc" id="toc">
+      <label class="tsearch"><span>/</span><input id="dq" placeholder="search the docs" spellcheck="false" aria-label="Search the docs"></label>
+      <pre class="tree mono" id="tree"></pre>
+      <p class="tnone mono" id="tnone" hidden>// nothing matches</p>
+    </aside>
+
+    <article class="dbody" id="dbody">
+
+      <section class="ds" id="overview" data-t="overview">
+        <h2><b>01</b> overview</h2>
+        <p>Most pairs of coins that ride the same narrative fight each other. Money rotates out of one and into the other, and the loser bleeds while the winner runs. TWIN turns that rotation into a mechanic: you pick two coins, TWIN creates one maker wallet that holds SOL and both coins, and a small engine watches the gap between the two charts.</p>
+        <p>The gap is measured from a sync point: the two prices at the moment the maker went live. As long as both coins move the same amount, the gap is zero and the maker does nothing. When one coin pulls ahead by more than your band, the maker trims a slice of the leader and uses SOL to buy the laggard. Each further band of gap is a new step and triggers one more trade. When the gap closes, the ladder resets.</p>
+        <pre class="dia mono">  coin A ──┐                                    ┌── trim the leader
+           ├──▶ one maker wallet ──▶ the gap ──▶┤
+  coin B ──┘    (SOL + A + B)       vs band     └── buy the laggard</pre>
+        <ul class="kv mono">
+          <li><span>what you pick</span><b>two pump.fun coins, a band, a buy size, a trim size</b></li>
+          <li><span>what TWIN creates</span><b>one maker wallet per twin, used for nothing else</b></li>
+          <li><span>what moves money</span><b>Jupiter swaps signed by the maker wallet</b></li>
+          <li><span>who can stop it</span><b>the owner wallet: pause, change rules, withdraw everything</b></li>
+        </ul>
+      </section>
+
+      <section class="ds" id="start" data-t="quick start">
+        <h2><b>02</b> quick start</h2>
+        <ol class="steps2">
+          <li><b>pick two coins.</b> Use <a class="ul" href="/#scan">Scan</a> to grab two coins moving on pump.fun right now, paste two contract addresses into the bar at the top, or let <a class="ul" href="/#find">Find</a> rank which coins move most like one you already hold.</li>
+          <li><b>sync them in the lab.</b> The <a class="ul" href="/#lab">Sync Lab</a> loads real candles for both, shows how often they move together, and replays your rules over the last day so you see how many trades the maker would have made.</li>
+          <li><b>set the rules.</b> Band, buy, trim, cooldown, max trade and price impact. Every rule has a hard range, listed in <a class="ul" href="#rules">rules</a>.</li>
+          <li><b>fund the maker.</b> Connect a wallet, sign one message to prove it's yours, then send SOL to the new maker wallet. At least <b data-cfg="minFund">0.05</b> SOL starts it; it never puts more than <b data-cfg="maxSol">5</b> SOL to work.</li>
+          <li><b>watch it, or walk away.</b> The twin's page shows every pass, trade and transaction. You can pause, change rules, reset the sync point, add SOL, or withdraw everything back to your wallet at any time.</li>
+        </ol>
+      </section>
+
+      <section class="ds" id="gap" data-t="the gap and the band spread ladder step">
+        <h2><b>03</b> the gap and the band</h2>
+        <p>Both coins are measured against their own price at the sync point, so a $0.0004 coin and a $0.02 coin are compared fairly. The gap is the log of one move divided by the other:</p>
+        <pre class="code mono"><button class="cp" type="button">copy</button>gap  = ln( (priceA / anchorA) / (priceB / anchorB) )
+step = floor( |gap| / band )</pre>
+        <p>A positive gap means A is ahead, a negative gap means B is ahead. Log makes it symmetric: A doubling while B stands still is the same size of gap as B halving while A stands still. With the default band of <b data-cfg="d.band">8</b>%, a gap of 9% is step 1, 17% is step 2, 25% is step 3.</p>
+        <pre class="dia mono" id="ladderStatic"> gap
+ +24% ┤· · · · · · · · · · · ·  step 3 ─ trim A · buy B
+ +16% ┤· · · · · · · · · · · ·  step 2 ─ trim A · buy B
+  +8% ┤· · · · · · · · · · · ·  step 1 ─ trim A · buy B
+   0% ┼──────────────────────── in sync · do nothing · ladder resets
+  -8% ┤· · · · · · · · · · · ·  step 1 ─ trim B · buy A
+ -16% ┤· · · · · · · · · · · ·  step 2 ─ trim B · buy A</pre>
+        <p>The maker acts once per step, not once per pass. It remembers the highest step it already traded (the ladder) and only trades again when the gap opens a new one. If the gap shrinks by two steps or more, the ladder steps down so a fresh push can trigger again. If the gap falls back inside the band, the ladder resets to zero.</p>
+      </section>
+
+      <section class="ds" id="try" data-t="try the rule calculator simulate">
+        <h2><b>04</b> try the rule</h2>
+        <p>Move the sliders and this runs the same decision the engine makes on a pass. No network, no wallet: it's the rule, not a forecast.</p>
+        <div class="calc panel">
+          <div class="cin">
+            <label><span>A moved since sync</span><input type="range" id="cA" min="-80" max="200" value="30"><b id="vA"></b></label>
+            <label><span>B moved since sync</span><input type="range" id="cB" min="-80" max="200" value="5"><b id="vB"></b></label>
+            <label><span>band</span><input type="range" id="cBand" min="2" max="40" value="8"><b id="vBand2"></b></label>
+            <label><span>buy (of free SOL)</span><input type="range" id="cBuy" min="5" max="60" value="20"><b id="vBuy2"></b></label>
+            <label><span>trim (of leader bag)</span><input type="range" id="cTrim" min="0" max="100" value="35"><b id="vTrim2"></b></label>
+            <label><span>SOL in the maker</span><input type="range" id="cSol" min="5" max="1000" value="100"><b id="vSol"></b></label>
+            <label><span>steps already traded</span><input type="range" id="cLad" min="0" max="10" value="0"><b id="vLad"></b></label>
+          </div>
+          <div class="cpane">
+            <pre class="mono cl" id="cLadder"></pre>
+            <div class="cres mono" id="cRes"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="ds" id="pass" data-t="the engine pass tick cooldown">
+        <h2><b>05</b> the engine pass</h2>
+        <p>Every live twin gets a pass, then waits its cooldown before the next one. A pass is short and always runs in the same order:</p>
+        <pre class="dia mono">pass(twin)
+ ├─ prices     Jupiter price v3 · $A, $B and SOL in USD
+ ├─ holdings   maker SOL + both token accounts, read from Solana RPC
+ ├─ sample     price A, price B, gap, SOL and value saved for the chart
+ ├─ gap        ln((pA/a0)/(pB/b0)) → step = floor(|gap|/band)
+ ├─ step > ladder ?
+ │   ├─ trim   sell trim% of the leader's bag (if it's worth more than $0.50)
+ │   ├─ buy    min(max trade, (min(SOL, cap) − reserve) × buy%) of the laggard
+ │   └─ ladder = step
+ ├─ step = 0 ?        ladder → 0
+ ├─ step &lt; ladder−1 ? ladder → step + 1
+ └─ next pass  now + cooldown minutes</pre>
+        <p>Every swap is a Jupiter quote first. If the quote's price impact is above your limit, the trade is skipped and logged instead of forced. If there's no route, that's logged too. Buys under 0.004 SOL are skipped, they'd be mostly fees.</p>
+        <p>Who runs passes: a clock calls <code>/api/tick</code> roughly every 30 seconds, and every visit to the site nudges it as well. Each tick picks up to three due twins with <code>FOR UPDATE SKIP LOCKED</code>, so two ticks never run the same twin at once.</p>
+      </section>
+
+      <section class="ds" id="rules" data-t="rules settings limits defaults band buy trim cooldown max trade impact slippage">
+        <h2><b>06</b> rules</h2>
+        <p>Every rule is clamped to its range on the server, so a bad value can't slip through. The owner can change them at any time from the twin's page; the change applies from the next pass and is written to the twin's log.</p>
+        <div class="tbl mono" role="table">
+          <div class="tr th" role="row"><span>rule</span><span>default</span><span>range</span><span>what it does</span></div>
+          <div class="tr" role="row"><span>band</span><span data-cfg="d.band" data-u="%">8%</span><span data-cfg="l.band" data-u="%">2–40%</span><span>gap per step. Smaller trades more often, bigger waits for real divergence.</span></div>
+          <div class="tr" role="row"><span>buy</span><span data-cfg="d.buy" data-u="%">20%</span><span data-cfg="l.buy" data-u="%">5–60%</span><span>share of free SOL spent on the laggard per step.</span></div>
+          <div class="tr" role="row"><span>trim</span><span data-cfg="d.trim" data-u="%">35%</span><span data-cfg="l.trim" data-u="%">0–100%</span><span>share of the leader's bag sold per step. 0 means only ever buy.</span></div>
+          <div class="tr" role="row"><span>cooldown</span><span data-cfg="d.cooldown" data-u="m">3m</span><span data-cfg="l.cooldown" data-u="m">1–120m</span><span>minutes between passes.</span></div>
+          <div class="tr" role="row"><span>max trade</span><span data-cfg="d.maxTrade" data-u=" SOL">0.5 SOL</span><span data-cfg="l.maxTrade" data-u=" SOL">0.01–5 SOL</span><span>ceiling on any single buy.</span></div>
+          <div class="tr" role="row"><span>price impact</span><span data-cfg="d.impact" data-u="%">4%</span><span data-cfg="l.impact" data-u="%">0.5–10%</span><span>skip a swap whose quote moves the price more than this.</span></div>
+          <div class="tr" role="row"><span>slippage</span><span data-cfg="d.slippage" data-u=" bps">300 bps</span><span data-cfg="l.slippage" data-u=" bps">50–1500 bps</span><span>how far the fill may drift from the quote.</span></div>
+        </div>
+        <p class="small mono">// fixed: min fund <b data-cfg="minFund">0.05</b> SOL · cap <b data-cfg="maxSol">5</b> SOL put to work · <b data-cfg="reserve">0.012</b> SOL kept for fees and rent · coins need ≥ $<b data-cfg="minLiq">3000</b> liquidity</p>
+      </section>
+
+      <section class="ds" id="custody" data-t="custody keys wallet security withdraw money">
+        <h2><b>07</b> custody and your money</h2>
+        <p>Read this one twice. To trade while you sleep, the maker has to sign its own swaps, so the server creates the maker's keypair and keeps it. That is custody: TWIN holds the key to the maker wallet, and you hold the key to the owner wallet that controls it.</p>
+        <ul class="kv mono">
+          <li><span>maker key</span><b>generated on the server, sealed with AES-256-GCM before it touches the database, opened only inside a pass</b></li>
+          <li><span>owner proof</span><b>you sign a one-time message with your wallet; the server checks the ed25519 signature and gives you a session</b></li>
+          <li><span>owner-only</span><b>rules, pause, reset sync point, withdraw. Anyone else sees the twin, never the controls</b></li>
+          <li><span>where SOL can go</span><b>into Jupiter swaps for coin A or B, and back to the owner wallet. There is no other transfer in the code</b></li>
+          <li><span>your own wallet</span><b>never shared. You sign the funding transfer yourself</b></li>
+        </ul>
+        <p>Withdraw is one button. The twin switches to closing, and the next passes sell all of A, then all of B (with wider limits so it can get out), give the empty token accounts' rent back, and send every remaining lamport to the owner wallet, minus the network fee for that transfer. Then the twin is closed for good.</p>
+        <pre class="dia mono"> owner wallet ──fund──▶ maker wallet ──swap──▶ Jupiter ⇄ $A / $B
+      ▲                      │
+      └──────── withdraw ────┘ sell A → sell B → close empty accounts → send all SOL</pre>
+      </section>
+
+      <section class="ds" id="life" data-t="lifecycle status pending live paused closing closed">
+        <h2><b>08</b> lifecycle</h2>
+        <pre class="dia mono"> [pending] ──fund ≥ 0.05 SOL──▶ [live] ◀──pause / resume──▶ [paused]
+     │                              │
+     └──────────── withdraw ────────┤
+                                    ▼
+                               [closing] ──coins sold, SOL sent──▶ [closed]</pre>
+        <ul class="kv mono">
+          <li><span>pending</span><b>maker wallet exists, waiting for SOL. Funding sets the sync point to that moment's prices</b></li>
+          <li><span>live</span><b>passes run on the cooldown, trades happen on new steps</b></li>
+          <li><span>paused</span><b>passes still sample prices for the chart, but never trade</b></li>
+          <li><span>reset sync</span><b>sets both anchors to today's prices and the ladder to 0. Use it after a coin re-prices for good</b></li>
+          <li><span>closing → closed</span><b>everything sold and sent home. Final</b></li>
+        </ul>
+      </section>
+
+      <section class="ds" id="lab" data-t="sync lab replay correlation backtest candles">
+        <h2><b>09</b> sync lab and replay</h2>
+        <p>The lab pulls real 5m, 15m or 1h candles for both coins from GeckoTerminal, lines them up on the same timestamps, and rebases both to 100 so you see who ran ahead. The lower chart is the gap with your band drawn on it; drag the band or move a slider and the replay reruns.</p>
+        <ul class="kv mono">
+          <li><span>sync %</span><b>correlation of the two coins' candle-to-candle log returns. 100% moves together, 0% is unrelated</b></li>
+          <li><span>replay</span><b>the same ladder rule over those candles, starting from 100 in cash, 0.5% fee per swap</b></li>
+          <li><span>compared to</span><b>holding 50/50 from the first candle</b></li>
+          <li><span>not included</span><b>price impact, failed routes, and how the maker's own buys move a thin chart</b></li>
+        </ul>
+        <p>Replay shows how the rule behaves on a past day. It is not a promise about tomorrow.</p>
+      </section>
+
+      <section class="ds" id="find" data-t="find a twin match correlation">
+        <h2><b>10</b> find a twin</h2>
+        <p>Paste one coin. TWIN takes up to nine Solana coins that people are boosting or profiling on Dexscreener right now, pulls 15m candles for each, lines each one up against yours, and ranks them by sync %. The top six come back with a small chart of both. Results are cached for five minutes per coin.</p>
+      </section>
+
+      <section class="ds" id="scan" data-t="live scan pump.fun trending new organic">
+        <h2><b>11</b> live scan</h2>
+        <p>The scan lists pump.fun coins moving right now from Jupiter's token boards: trending over 5 minutes, most traded, highest organic score, and the newest. The server keeps each board for 55 seconds; the page rescans every 60 seconds with a countdown, flashes coins that just appeared, and updates numbers in place.</p>
+        <ul class="kv mono">
+          <li><span>kept</span><b>coins launched on pump.fun (by launchpad, or a mint ending in "pump"), up to 40 per board</b></li>
+          <li><span>columns</span><b>mcap, 5m and 1h change, 1h volume, liquidity, holders, all from Jupiter</b></li>
+          <li><span>thin</span><b>coins under $3,000 liquidity are greyed: a maker can't trade them</b></li>
+          <li><span>pick</span><b>tap A or B on any row, then Sync, Bind or Find from the tray</b></li>
+        </ul>
+      </section>
+
+      <section class="ds" id="data" data-t="data sources jupiter geckoterminal dexscreener solana rpc">
+        <h2><b>12</b> data sources</h2>
+        <div class="tbl mono t3" role="table">
+          <div class="tr th" role="row"><span>what</span><span>source</span><span>used for</span></div>
+          <div class="tr" role="row"><span>prices</span><span>Jupiter price v3</span><span>every pass, live holdings value</span></div>
+          <div class="tr" role="row"><span>swaps</span><span>Jupiter swap v1 (quote + swap)</span><span>every trade the maker makes</span></div>
+          <div class="tr" role="row"><span>token info + boards</span><span>Jupiter tokens v2</span><span>names, logos, liquidity, the live scan</span></div>
+          <div class="tr" role="row"><span>candles</span><span>GeckoTerminal OHLCV</span><span>sync lab, replay, find a twin</span></div>
+          <div class="tr" role="row"><span>candidates</span><span>Dexscreener boosts + profiles</span><span>find a twin</span></div>
+          <div class="tr" role="row"><span>balances + transactions</span><span>Solana RPC</span><span>maker holdings, funding, confirmations</span></div>
+        </div>
+        <p>If a source fails, the page says so. Nothing is filled in with made-up numbers.</p>
+      </section>
+
+      <section class="ds" id="api" data-t="api endpoints http json">
+        <h2><b>13</b> api</h2>
+        <p>Everything the site shows comes from these JSON endpoints on the same domain. Read endpoints are open; owner actions need the session you get from signing in.</p>
+        <div class="tbl mono t3 api" role="table">
+          <div class="tr th" role="row"><span>call</span><span>params</span><span>returns</span></div>
+          <div class="tr" role="row"><span><i>GET</i> /api/config</span><span>—</span><span>defaults, limits, cap, min fund, reserve, min liquidity</span></div>
+          <div class="tr" role="row"><span><i>GET</i> /api/scan</span><span>tab=trending|traded|organic|new</span><span>live pump.fun board, ≤ 40 coins</span></div>
+          <div class="tr" role="row"><span><i>GET</i> /api/coin</span><span>ca</span><span>name, symbol, logo, price, liquidity</span></div>
+          <div class="tr" role="row"><span><i>GET</i> /api/sync</span><span>a, b, tf=5m|15m|1h</span><span>aligned candles [t, pA, pB] and correlation</span></div>
+          <div class="tr" role="row"><span><i>GET</i> /api/match</span><span>a</span><span>top six coins ranked by sync with a</span></div>
+          <div class="tr" role="row"><span><i>GET</i> /api/twins</span><span>owner (optional)</span><span>live twins, or one owner's</span></div>
+          <div class="tr" role="row"><span><i>GET</i> /api/twin</span><span>id</span><span>one twin: holdings, samples, trades, log</span></div>
+          <div class="tr" role="row"><span><i>GET</i> /api/stats</span><span>—</span><span>live twins, trades, 24h trades, volume, managed SOL, feed</span></div>
+          <div class="tr" role="row"><span><i>GET</i> /api/nonce</span><span>wallet</span><span>a one-time message to sign</span></div>
+          <div class="tr" role="row"><span><i>POST</i> /api/login</span><span>wallet, signature</span><span>session token</span></div>
+          <div class="tr" role="row"><span><i>POST</i> /api/create</span><span>a, b, settings</span><span>new pending twin and its maker address</span></div>
+          <div class="tr" role="row"><span><i>POST</i> /api/funded</span><span>id</span><span>goes live once the maker holds ≥ min fund</span></div>
+          <div class="tr" role="row"><span><i>POST</i> /api/settings · pause · reanchor · withdraw</span><span>id, …</span><span>owner controls</span></div>
+        </div>
+        <pre class="code mono"><button class="cp" type="button">copy</button><span id="curlLine">curl -s https://twin-tawny-alpha.vercel.app/api/scan?tab=trending</span></pre>
+      </section>
+
+      <section class="ds" id="risks" data-t="risks loss rug">
+        <h2><b>14</b> risks</h2>
+        <ul class="risk mono">
+          <li><b>you can lose money.</b> Buying the laggard is a bet that it catches up. Sometimes the laggard is behind because it's dying, and the maker keeps buying it, one step at a time, until the SOL runs out or you stop it.</li>
+          <li><b>meme coins can go to zero.</b> A rug or a dead dev takes the maker's bag of that coin with it.</li>
+          <li><b>custody.</b> The server holds the maker key. A bug or a breach of the server could lose what's in the maker. Fund only what you can lose; it never puts more than <b data-cfg="maxSol">5</b> SOL to work.</li>
+          <li><b>thin liquidity.</b> On small charts the maker's own buys move the price, and the impact limit may skip trades you expected.</li>
+          <li><b>missed passes.</b> If prices or routes fail, a pass skips and logs it. Fast moves can open several steps between two passes; the maker trades once when it sees the new step.</li>
+          <li><b>not advice.</b> TWIN is a tool. Nothing here is a recommendation to buy any coin.</li>
+        </ul>
+      </section>
+
+      <section class="ds" id="gloss" data-t="glossary terms">
+        <h2><b>15</b> glossary</h2>
+        <ul class="kv mono">
+          <li><span>twin</span><b>two coins bound to one maker wallet</b></li>
+          <li><span>maker</span><b>the wallet that holds SOL, A and B and makes the trades</b></li>
+          <li><span>sync point</span><b>both prices at the moment the twin went live (or was reset)</b></li>
+          <li><span>gap</span><b>how far one coin ran ahead of the other since the sync point</b></li>
+          <li><span>band</span><b>the gap per step</b></li>
+          <li><span>ladder</span><b>the highest step the maker already traded on</b></li>
+          <li><span>leader / laggard</span><b>the coin ahead / the coin behind</b></li>
+          <li><span>pass</span><b>one run of the engine for one twin</b></li>
+        </ul>
+        <div class="dend"><a class="btn pri" href="/#scan">Pick two coins</a><a class="btn" href="/#lab">Open the lab</a></div>
+      </section>
+    </article>
+  </div>
+</main>
+<script src="/js/ascii.js"></script>
+<script src="/js/docs.js"></script>
+</body>
+</html>
