@@ -15,8 +15,11 @@
 <link rel="apple-touch-icon" href="/img/apple-touch.png">
 <link rel="preload" href="/fonts/jbm-800.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/css/twin.css">
+<script>(function(){var h=document.documentElement;try{if(matchMedia('(prefers-reduced-motion: reduce)').matches||sessionStorage.getItem('tw:boot')||location.hash)return}catch(e){}h.classList.add('booting');setTimeout(function(){if(h.classList.contains('booting')){h.classList.remove('booting');dispatchEvent(new Event('twin:booted'))}},9500)})()</script>
 </head>
 <body>
+<div id="boot" aria-label="Loading TWIN" role="img"><canvas></canvas><div class="bbar"><i></i></div><span class="bskip">click to skip ›</span></div>
+<script src="/js/boot.js"></script>
 <canvas id="rain" aria-hidden="true"></canvas>
 <div class="progress" id="progress" aria-hidden="true"></div>
 <nav id="nav">
@@ -38,7 +41,7 @@
         <label class="slot"><span>A</span><input id="hA" placeholder="coin A contract" spellcheck="false" aria-label="Coin A contract address"></label>
         <button class="link" type="button" id="hSwap" title="Swap A and B">⇄</button>
         <label class="slot"><span>B</span><input id="hB" placeholder="coin B contract" spellcheck="false" aria-label="Coin B contract address"></label>
-        <button class="btn pri" type="submit">Sync them</button>
+        <button class="btn pri" type="submit">Twin them</button>
       </form>
       <p class="hint">no idea? <button type="button" class="ul" data-go="scan">pick from what's moving on pump.fun right now</button> or <button type="button" class="ul" data-go="find">find a twin for any coin</button></p>
     </div>
@@ -219,7 +222,7 @@
   </section>
 </main>
 
-<div class="tray" id="tray" hidden><div class="tslot" id="tA"><span class="tl2">A</span><em>pick a coin</em></div><span class="tlink" aria-hidden="true">=o=</span><div class="tslot" id="tB"><span class="tl2">B</span><em>pick a coin</em></div><div class="tacts"><button class="btn sm" type="button" id="tFind">Find A's twin</button><button class="btn sm pri" type="button" id="tSync">Sync</button><button class="btn sm" type="button" id="tBind">Bind</button><button class="link" type="button" id="tClear" title="Clear">×</button></div></div>
+<div class="tray" id="tray" hidden><div class="tslot" id="tA"><span class="tl2">A</span><em>pick a coin</em></div><span class="tlink" aria-hidden="true">=o=</span><div class="tslot" id="tB"><span class="tl2">B</span><em>pick a coin</em></div><div class="tacts"><button class="btn sm" type="button" id="tFind">Find A's twin</button><button class="btn sm pri" type="button" id="tSync">Twin them</button><button class="btn sm" type="button" id="tBind">Bind</button><button class="link" type="button" id="tClear" title="Clear">×</button></div></div>
 <div class="sheet" id="sheet" aria-hidden="true"><div class="shade" data-close></div><div class="spanel" id="sPanel"></div></div>
 <div class="cmd" id="cmd" hidden><div class="cbox"><span class="mono">&gt;</span><input id="cmdIn" placeholder="sync A B · find A · bind A B · twin 1 · twins · help" spellcheck="false" autocomplete="off"></div><div class="cout mono" id="cmdOut"></div></div>
 <p class="sr" id="srlive" aria-live="polite"></p>
