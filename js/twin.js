@@ -30,7 +30,9 @@
   /* ---------------- hero: the coins, the wordmark, the typed line ---------------- */
   window.ASCIIRain($('#rain'));
   const coins = window.ASCIICoins($('#coins'));
-  (async () => { const t = 'bind two coins to one market maker'; const el = $('#typed'); for (let i = 0; i <= t.length; i++) { el.textContent = '> ' + t.slice(0, i); await sleep(reduce ? 0 : 38); } })();
+  const booted = new Promise(r => document.documentElement.classList.contains('booting') ? addEventListener('twin:booted', r, { once: true }) : r());
+  booted.then(() => setTimeout(() => coins.pulse(), 350));
+  (async () => { await booted; await sleep(250); const t = 'bind two coins to one market maker'; const el = $('#typed'); for (let i = 0; i <= t.length; i++) { el.textContent = '> ' + t.slice(0, i); await sleep(reduce ? 0 : 38); } })();
   const ready = () => $('#pairBar').classList.toggle('ready', B58.test($('#hA').value.trim()) && B58.test($('#hB').value.trim()));
   ['#hA', '#hB'].forEach(k => $(k).addEventListener('input', ready));
   $('#hSwap').onclick = () => { const a = $('#hA').value; $('#hA').value = $('#hB').value; $('#hB').value = a; };
@@ -176,7 +178,7 @@
   document.addEventListener('click', e => {
     const b = e.target.closest('[data-pk]'); if (!b) return; const c = SC.list.find(x => x.mint === b.dataset.m); if (!c) return; const k = b.dataset.pk, o = k === 'A' ? 'B' : 'A';
     if (PK[o] && PK[o].mint === c.mint) PK[o] = null; PK[k] = PK[k] && PK[k].mint === c.mint ? null : c; renderTray(); renderScan();
-    if (PK.A && PK.B) toast(`$${PK.A.symbol} × $${PK.B.symbol} ready. Sync them or bind them.`);
+    if (PK.A && PK.B) toast(`$${PK.A.symbol} × $${PK.B.symbol} ready. Twin them or bind them.`);
   });
   $('#tSync').onclick = () => { if (!(PK.A && PK.B)) return; coins.pulse(); loadLab(PK.A.mint, PK.B.mint); goTo('lab'); };
   $('#tBind').onclick = () => { if (!(PK.A && PK.B)) return; $('#bA').value = PK.A.mint; $('#bB').value = PK.B.mint; pick('A'); pick('B'); step(1); goTo('bind'); };
