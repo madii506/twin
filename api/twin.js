@@ -330,6 +330,24 @@ R['GET match'] = async ({ q }) => {
     return { a: A, list: out.slice(0, 6) };
   });
 };
+// the live scan: pump.fun coins moving right now, from Jupiter's 5-minute boards. Refreshed every minute.
+const SCAN = { trending: '/tokens/v2/toptrending/5m?limit=100', traded: '/tokens/v2/toptraded/5m?limit=100', organic: '/tokens/v2/toporganicscore/5m?limit=100', new: '/tokens/v2/recent' };
+R['GET scan'] = async ({ q }) => {
+  const tab = SCAN[q.tab] ? q.tab : 'trending';
+  return cached('scan:' + tab, 55, async () => {
+    const j = await getJson(JUP + SCAN[tab], {}, 9000); const out = [];
+    for (const t of (Array.isArray(j) ? j : [])) {
+      if (!t || !t.id || !(t.launchpad === 'pump.fun' || /pump$/.test(t.id))) continue;
+      const s5 = t.stats5m || {}, s1 = t.stats1h || {};
+      out.push({ mint: t.id, symbol: clean(t.symbol).slice(0, 16), name: clean(t.name).slice(0, 40), image: t.icon || null, mc: Math.round(t.mcap || t.fdv || 0), liq: Math.round(t.liquidity || 0), price: Number(t.usdPrice || 0),
+        ch5: s5.priceChange != null ? +Number(s5.priceChange).toFixed(2) : null, ch1h: s1.priceChange != null ? +Number(s1.priceChange).toFixed(2) : null,
+        vol1h: Math.round((s1.buyVolume || 0) + (s1.sellVolume || 0)), buys5: s5.numBuys || 0, sells5: s5.numSells || 0, holders: t.holderCount || 0,
+        organic: t.organicScore != null ? Math.round(t.organicScore) : null, created: (t.firstPool && t.firstPool.createdAt) || null, bonded: !!t.graduatedPool || !!t.graduatedAt });
+      if (out.length >= 40) break;
+    }
+    return { at: Date.now(), tab, list: out };
+  });
+};
 // a demo pair for the lab: the two trending coins that moved most alike today
 R['GET demo'] = async () => cached('demo', 600, async () => {
   const srcs = await Promise.all(['/token-boosts/top/v1', '/token-boosts/latest/v1'].map(u => getJson(DEX + u).catch(() => [])));
